@@ -1,0 +1,16 @@
+# IBM Cloud API key. You are required to provide a value.
+ibmcloud_api_key = ""
+
+# Prefix to all resources that are created. 
+# Remove comment in the next line to override the default value from variables.tf
+# basename = ""
+
+# VPC region 
+# Run `ibmcloud is regions` to check available regions
+# Remove comment in the next line to override the default value from variables.tf
+# region = ""
+
+# Resource group name to provision all your resources 
+# Run ibmcloud resource groups command on CLI
+# Remove comment in the next line to override the default value from variables.tf
+# resource_group_name = ""

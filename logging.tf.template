@@ -1,0 +1,52 @@
+variable "logdna_agent_url" {
+  default     = ""
+  description = "URL for logdna agent"
+}
+variable "logdna_agent_access_key" {
+  default     = ""
+  description = "Access key for logdna agent"
+}
+variable "logdna_agent_api_host" {
+  default     = ""
+  description = "API host for logdna agent"
+}
+variable "logdna_agent_log_host" {
+  default     = ""
+  description = "Host for logdna agent"
+}
+variable "logdna_agent_log_host" {
+  default     = ""
+  description = "Tags for logdna agent"
+}
+
+resource "null_resource" "instance_logging" {
+  connection {
+    type        = "ssh"
+    host        = ibm_is_floating_ip.floatingip.address
+    user        = "root"
+    private_key = tls_private_key.build_key.private_key_pem
+  }
+
+  # Configure and deploys the script that will be used to install the logging agent.
+  provisioner "file" {
+    content = templatefile("${path.module}/scripts/log-agent-config.sh", {
+      logdna_agent_url        = var.logdna_agent_url
+      logdna_agent_access_key = var.logdna_agent_access_key
+      logdna_agent_api_host   = var.logdna_agent_api_host
+      logdna_agent_log_host   = var.logdna_agent_log_host
+      logdna_agent_tags       = var.logdna_agent_tags
+
+    })
+    destination = "/tmp/log-agent-config.sh"
+  }
+
+  # Execute the script to install the logging agent.
+  provisioner "remote-exec" {
+    inline = [
+      "cloud-init status --wait",
+      "chmod +x /tmp/log-agent-config.sh",
+      "sed -i.bak 's/\r//g' /tmp/log-agent-config.sh",
+      "/tmp/log-agent-config.sh",
+    ]
+  }
+}
