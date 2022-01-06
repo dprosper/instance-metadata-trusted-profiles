@@ -18,12 +18,6 @@ You can remove all resources created by running a terraform destroy command [des
 
 # Requirements
 
-- [Install IBM Cloud CLI](https://cloud.ibm.com/docs/cli?topic=cloud-cli-install-ibmcloud-cli) and required plugins:
-
-  - infrastructure-services
-
-- [Install jq](https://stedolan.github.io/jq/).
-
 - [Install Terraform](https://www.terraform.io/downloads.html)
 
 - [Download the IBM Cloud provider plugin for Terraform](https://github.com/IBM-Cloud/terraform-provider-ibm#download-the-provider-from-the-terraform-registry-option-1)
