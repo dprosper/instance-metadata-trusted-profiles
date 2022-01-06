@@ -2,17 +2,6 @@
 
 Use this Terraform template to provision a new Virtual Private Cloud (VPC) and Linux based Virtual Server Instance (VSI), configure IAM Trusted Profile for that instance and automate the update of SSH keys that are authorized to authenticate with the VSI.
 
-Deploying an application to a [Virtual Server Instance (VSI)](https://cloud.ibm.com/docs/vpc?topic=vpc-about-advanced-virtual-servers) may require configuring based on information that is specific to the VSI.  An example would be configuring the application to interact with a cloud service based on the region or availability zone of the VSI.  The most common approach would be to use user data to perform the configurations.  This approach, however, requires supplying the instance-specific information in the user data field during the initial provisioning of the VSI.
-
-In addition, it may be necessary to modify the configuration across multiple VSIs based on changes to the environment. Although user data is configurable to run on a reboot, it continues to have a few drawbacks.  One example would be an application that requires discovering changes to the hostname of the load balancer deployed in front of it.
-
-[Virtual Private Cloud (VPC)](https://cloud.ibm.com/docs/vpc?topic=vpc-about-vpc) and [Identity and Access Management (IAM)](https://cloud.ibm.com/docs/account?topic=account-iamoverview&interface=ui) provide a set of complementary features that can help in these situations:
-
-- [VPC Instance Metadata](https://cloud.ibm.com/docs/vpc?topic=vpc-imd-about) is a service that provides instance-specific information, for example, the availability zone in which the instance is running, the instance ID, the subnet, and more. I can also provide an [IAM token](https://cloud.ibm.com/docs/vpc?topic=vpc-imd-trusted-profile-metadata) used to access cloud resources.
-- [IAM Trusted Profiles](https://cloud.ibm.com/docs/account?topic=account-create-trusted-profile) provide the ability to configure fine-grained authorization for computing resources running on IBM Cloud: Kubernetes, Red Hat OpenShift, and VPC Virtual Server Instance (VSI). A compute resource is assigned access to IAM-enabled service
-
-The availability of these two services opens up opportunities for the contextual configuration of an application running on the compute instance, not only during initial deployment but also for dynamic updates. This post introduces an example application that will take advantage of these two services to dynamically update the authorized SSH keys on a Linux instance running inside a VPC.
-
 As of this writing, the VPC Instance Metadata service and the IAM Trusted Profiles for VPC VSI are in Select Availability. Contact [IBM support](https://cloud.ibm.com/docs/vpc?topic=vpc-getting-help) or your IBM Sales representative if you're interested in getting early access.
 
 # Architecture
