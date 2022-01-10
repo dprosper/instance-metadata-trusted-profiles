@@ -2,6 +2,8 @@
 
 Use this Terraform template to provision a new Virtual Private Cloud (VPC) and Linux based Virtual Server Instance (VSI), configure IAM Trusted Profile for that instance and automate the update of SSH keys that are authorized to authenticate with the VSI.
 
+This is a companion repository to the [Using Instance Metadata and Trusted Profiles for Managing SSH Keys](https://www.ibm.com/cloud/blog/using-instance-metadata-and-trusted-profiles-for-managing-ssh-keys) blog post.
+
 As of this writing, the VPC Instance Metadata service and the IAM Trusted Profiles for VPC VSI are in Select Availability. Contact [IBM support](https://cloud.ibm.com/docs/vpc?topic=vpc-getting-help) or your IBM Sales representative if you're interested in getting early access.
 
 # Architecture
