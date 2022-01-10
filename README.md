@@ -90,9 +90,9 @@ From your web browser go to the [IAM Trusted Profiles management page](https://c
   - Select **Viewer** under Platform access.
   - Click on **Add** and then **Assign**.
     > Note: You can add additional SSH keys by following the steps above prior to clicking on Assign.
-- Wait at least 15 minutes (default refresh interval set in the `variables.tf` file) and then try to SSH into the VSI with the newly added SSH Key.
+- Wait at least 15 minutes and then try to SSH into the VSI with the newly added SSH Key.
 
-  > Note: The default polling interval in the application is 30 minutes, you can adjust it if needed by editing the ssh-authorized-keys.sh file.
+  > Note: The default polling interval in the application is 15 minutes, you can adjust it if needed by editing the `variables.tf` file.
 
 - The service that updates the authorized SSH keys writes a log file to the `/var/log/ssh-authorized-keys.log` directory on the VSI. You can view these logs when you are logged into the VSI or enable IBM Cloud Logging to capture these logs in your region.
 
