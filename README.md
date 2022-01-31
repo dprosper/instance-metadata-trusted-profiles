@@ -84,7 +84,7 @@ Currently the Metadata service (in Beta) is disabled by default on any newly cre
 
   - CLI: 
       ```sh
-         terraform output --json | jq -r .ibm_is_instance.instance.id
+         terraform output --json | jq -r .INSTANCE_ID
 
          ibmcloud is instance-update $INSTANCE_ID --metadata-service true --output JSON
 
