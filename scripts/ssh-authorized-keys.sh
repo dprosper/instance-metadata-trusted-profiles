@@ -11,8 +11,8 @@
 #
 
 # Exit on errors
-set -o errexit
-set -o pipefail
+# set -o errexit
+# set -o pipefail
 # set -o nounset
 
 log_file=/var/log/ssh-authorized-keys.log
@@ -39,33 +39,43 @@ function log_error {
 }
 
 log_info "Verifying jq is installed and in the path."
-type jq >/dev/null 2>&1 || { log_error "This script requires jq, but it's not installed."; exit 1; }
+type jq >/dev/null 2>&1 || { log_info "This script requires jq, but it's not installed."; exit 1; }
 
 # Starting a continuous loop for refreshing authorized_keys
 while [ true ]
 do
+
+  # Checking if Metatadata service is enabled.
+  log_info "Checking if Metatadata service is enabled."
+  nc -z -v -w5 169.254.169.254 80 >/dev/null 2>&1
+  [ $? -ne 0 ] && log_error "The metadata service is not enabled" && exit 1
+
   # Calling the Instance Identity service to obtain the instance token.
   log_info "Getting instance identity access token."
-  access_token_response=`curl -s -X PUT "http://169.254.169.254/instance_identity/v1/token?version=2021-10-12"\
+  access_token_response=`curl --connect-timeout 5 -s -X PUT "http://169.254.169.254/instance_identity/v1/token?version=2021-10-12"\
     -H "Metadata-Flavor: ibm"\
     -H "Accept: application/json"\
     -d '{
           "expires_in": 3600
         }' > /tmp/access_token_response.json`
-
+  
   # Validating response received.
-  if jq -e . /tmp/access_token_response.json >/dev/null 2>&1; then
-    log_info "Received a valid json response from the Instance Identity service."
+  if [ -s /tmp/access_token_response.json ]; then
+   if jq -e . /tmp/access_token_response.json >/dev/null 2>&1; then
+      log_info "Received a valid json response from the Instance Identity service."
+   else
+      log_error "The response received from the Instance Identity service failed parsing as valid json."
+      exit 1
+   fi
   else
-    log_warning "The response received from the Instance Identity service failed parsing as valid json."
-    log_error "The response received from the Instance Identity service failed parsing as valid json."
-    exit 1
+      log_error "The response received from the Instance Identity service call is empty, possibly metadata service is not enabled."
+      exit 1
   fi
 
   # Parsing the access_token from the response.
   access_token=$(jq -r '(.access_token) | select (.!=null)' /tmp/access_token_response.json)
   if [ -z $${access_token} ]; then
-    log_error "An access_token was not found in the response received from the Instance Identity service."
+    log_info "An access_token was not found in the response received from the Instance Identity service."
     exit 1
   fi
 
@@ -79,7 +89,6 @@ do
   if jq -e . /tmp/instance.json >/dev/null 2>&1; then
     log_info "Received a valid json response from the Metadata service."
   else
-    log_warning "The response received from the Metadata service failed parsing as valid json."
     log_error "The response received from the Metadata service failed parsing as valid json."
     exit 1
   fi
@@ -105,7 +114,6 @@ do
     if jq -e . /tmp/iam_identity_token_response.json >/dev/null 2>&1; then
       log_info "Received a valid json response from the Instance Metadata service."
     else
-      log_warning "The response received from the Instance Metadata service failed parsing as valid json."
       log_error "The response received from the Instance Metadata service failed parsing as valid json."
       exit 1
     fi
@@ -126,7 +134,6 @@ do
         if jq -e . /tmp/keys.json >/dev/null 2>&1; then
           log_info "Received a valid json response from the regional VPC service."
         else
-          log_warning "The response received from the regional VPC service failed parsing as valid json."
           log_error "The response received from the regional VPC service failed parsing as valid json."
           exit 1
         fi
@@ -151,7 +158,6 @@ do
         fi
       fi
     else 
-      log_warning "Encountered error getting IAM token $${error_code}."
       log_error "Encountered error getting IAM token $${error_code}."
     fi
   fi

@@ -78,6 +78,20 @@ You can remove all resources created by running a terraform destroy command [des
 
 ### Testing the dynamic SSH keys configuration
 
+Currently the Metadata service (in Beta) is disabled by default on any newly created VSI and there is no resource/property in the current version of the provider to enable it.  Use the UI to navigate to the VSI that was created and enable the service.  You are required to stop and start the VSI after having enabled the service.  
+  - UI: 
+      ![UI](images/ui.png)
+
+  - CLI: 
+      ```sh
+         terraform output --json | jq -r .ibm_is_instance.instance.id
+
+         ibmcloud is instance-update $INSTANCE_ID --metadata-service true --output JSON
+
+         echo y | ibmcloud is instance-stop $INSTANCE_ID --output JSON
+
+         ibmcloud is instance-start $INSTANCE_ID --output JSON
+      ```
 From your web browser go to the [IAM Trusted Profiles management page](https://cloud.ibm.com/iam/trusted-profiles) and click on the newly created profile, i.e. `<basename>-trusted-profile`.
 
 - Notice in the **Trust relationship** tab the **Compute resources** section includes the VSI that was created by the Terraform template.
