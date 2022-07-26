@@ -52,7 +52,7 @@ do
 
   # Calling the Instance Identity service to obtain the instance token.
   log_info "Getting instance identity access token."
-  access_token_response=`curl --connect-timeout 5 -s -X PUT "http://169.254.169.254/instance_identity/v1/token?version=2021-10-12"\
+  access_token_response=`curl --connect-timeout 5 -s -X PUT "http://169.254.169.254/instance_identity/v1/token?version=2022-03-01"\
     -H "Metadata-Flavor: ibm"\
     -H "Accept: application/json"\
     -d '{
@@ -81,7 +81,7 @@ do
 
   # Calling the Instance Metadata service using the instance access_token.
   log_info "Getting instance metadata."
-  curl -s -X GET "http://169.254.169.254/metadata/v1/instance?version=2021-09-10"\
+  curl -s -X GET "http://169.254.169.254/metadata/v1/instance?version=2022-03-01"\
     -H "Accept:application/json"\
     -H "Authorization: Bearer $${access_token}" > /tmp/instance.json
 
@@ -108,7 +108,7 @@ do
         -H "Accept: application/json"\
         -H "Authorization: Bearer $${access_token}"\
         -d '{"trusted_profile": {"id": "${profileid}" }}'\
-        http://169.254.169.254/instance_identity/v1/iam_token?version=2021-10-12 > /tmp/iam_identity_token_response.json
+        http://169.254.169.254/instance_identity/v1/iam_token?version=2022-03-01 > /tmp/iam_identity_token_response.json
 
     # Validating response received from the IAM service.
     if jq -e . /tmp/iam_identity_token_response.json >/dev/null 2>&1; then
@@ -128,7 +128,7 @@ do
 
         # Calling the regional VPC service to read SSH keys the instance is allowed to read based on its IAM identity.
         log_info "Getting list of SSH Keys authorized for $${instance_name} with id $${instance_id} in region $${region}."
-        curl -s -X GET "https://$${region}.iaas.cloud.ibm.com/v1/keys?version=2021-09-07&generation=2" -H "Authorization: $${iam_token}" | jq '.keys' > /tmp/keys.json 
+        curl -s -X GET "https://$${region}.iaas.cloud.ibm.com/v1/keys?version=2022-03-01&generation=2" -H "Authorization: $${iam_token}" | jq '.keys' > /tmp/keys.json 
         
         # Validating response received from the IAM service.
         if jq -e . /tmp/keys.json >/dev/null 2>&1; then

@@ -4,10 +4,6 @@ Use this Terraform template to provision a new Virtual Private Cloud (VPC) and L
 
 This is a companion repository to the [Using Instance Metadata and Trusted Profiles for Managing SSH Keys](https://www.ibm.com/cloud/blog/using-instance-metadata-and-trusted-profiles-for-managing-ssh-keys) blog post.
 
-~As of this writing, the VPC Instance Metadata service and the IAM Trusted Profiles for VPC VSI are in Select Availability. Contact [IBM support](https://cloud.ibm.com/docs/vpc?topic=vpc-getting-help) or your IBM Sales representative if you're interested in getting early access.~
-
-The VPC Instance Metadata service is Generally Available. 
-
 # Architecture
 
 A VSI is deployed inside of a VPC with appropriate security groups. A small application, in this case a bash script ssh-authorized-keys.sh, is added as a running service on the instance.
@@ -80,7 +76,7 @@ You can remove all resources created by running a terraform destroy command [des
 
 ### Testing the dynamic SSH keys configuration
 
-Currently the Metadata service (in Beta) is disabled by default on any newly created VSI and there is no resource/property in the current version of the provider to enable it.  Use the UI to navigate to the VSI that was created and enable the service.  You are required to stop and start the VSI after having enabled the service.  
+Currently the Metadata service is disabled by default on any newly created VSI and there is no resource/property in the current version of the provider to enable it. Use the UI to navigate to the VSI that was created and enable the service. You are required to stop and start the VSI after having enabled the service.  
   - UI: 
       ![UI](images/ui.png)
 
@@ -97,15 +93,15 @@ Currently the Metadata service (in Beta) is disabled by default on any newly cre
 From your web browser go to the [IAM Trusted Profiles management page](https://cloud.ibm.com/iam/trusted-profiles) and click on the newly created profile, i.e. `<basename>-trusted-profile`.
 
 - Notice in the **Trust relationship** tab the **Compute resources** section includes the VSI that was created by the Terraform template.
-- Switch to the **Access policies** tab and click on **Assign access** to add additional SSH keys to the VSI.
-  - Click on **IAM services**
-  - Select **VPC Infrastructure Services**
-  - Click on **Resources based on selected attributes**
-  - Select **Resource type** and then **SSH Key for VPC**
-  - Select **Key ID** and then pick the SSH key that you want to add to the VSI
-  - Select **Viewer** under Platform access.
-  - Click on **Add** and then **Assign**.
-    > Note: You can add additional SSH keys by following the steps above prior to clicking on Assign.
+- Switch to the **Access** tab and click on **Assign access** to add additional SSH keys to the VSI.
+  - Click on **Access policy**.
+  - Select **VPC Infrastructure Services** from the **Service** list, click on **Next**.
+  - Select **Specific resources**.
+  - Under **Attribute type**, select **Resource type** and then under **Value** select **SSH Key for VPC**.
+  - Click on **Add a condition** and under **Attribute type**, select **Key ID** and then pick the SSH key that you want to add to the VSI. Click on **Next**.
+  - Select **Viewer** under **Roles and actions**.
+  - Click on **Review** and then **Add** and then **Assign**.
+    > Note: You can add additional SSH keys by following the steps above before clicking on Assign.
 - Wait at least 15 minutes and then try to SSH into the VSI with the newly added SSH Key.
 
   > Note: The default polling interval in the application is 15 minutes, you can adjust it if needed by editing the `variables.tf` file.
